@@ -33,23 +33,33 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Teleop Manual (Mecnaum)", group="Testing Opmode")
+@TeleOp(name="Teleop Manual Test2", group="Testing Opmode")
 //@Disabled
-public class TeleopMain extends OpMode
-{
+public class TeleopMain2 extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFDrive = null;
     private DcMotor rightFDrive = null;
     private DcMotor leftBDrive = null;
-    private DcMotor rightBDrive = null;
-
+    private DcMotor LifterUpDrive = null;
+    private DcMotor LifterDownDrive= null;
     private DcMotor intakeL = null;
     private DcMotor intakeR = null;
+    private DcMotor lifting = null;
+    private boolean lifting_fwd = true;
+    private Servo servoTest = null;
+    private Servo servoRight = null;
+    private Servo servoLeft = null;
+    private Servo servoL = null;
+    private Servo servoR = null;
 
+    private DcMotor rightBDrive = null;
+    private boolean intakeDown = true;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -61,13 +71,15 @@ public class TeleopMain extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFDrive  = hardwareMap.get(DcMotor.class, "lf");
+        leftFDrive = hardwareMap.get(DcMotor.class, "lf");
         rightFDrive = hardwareMap.get(DcMotor.class, "rf");
-        leftBDrive  = hardwareMap.get(DcMotor.class, "lb");
+        leftBDrive = hardwareMap.get(DcMotor.class, "lb");
         rightBDrive = hardwareMap.get(DcMotor.class, "rb");
-
         intakeL = hardwareMap.get(DcMotor.class, "intakeL");
         intakeR = hardwareMap.get(DcMotor.class, "intakeR");
+
+        lifting = hardwareMap.get(DcMotor.class, "lifting");
+        lifting.setDirection(DcMotor.Direction.FORWARD);
 
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -76,9 +88,14 @@ public class TeleopMain extends OpMode
         rightFDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBDrive.setDirection(DcMotor.Direction.REVERSE);
-
         intakeL.setDirection(DcMotor.Direction.FORWARD);
         intakeR.setDirection(DcMotor.Direction.REVERSE);
+        // Initialize the hardware variables.
+        servoTest = hardwareMap.get(Servo.class, "platform_servo");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
+        servoL = hardwareMap.get(Servo.class, "servoL");
+        servoR = hardwareMap.get(Servo.class, "servoR");
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -113,6 +130,7 @@ public class TeleopMain extends OpMode
         double leftBPower;
         double rightFPower;
         double rightBPower;
+        double liftPower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -122,17 +140,18 @@ public class TeleopMain extends OpMode
         double drivex = -gamepad1.left_stick_x;
         double drivey = gamepad1.left_stick_y;
 
-        double turn  =  gamepad1.right_stick_x;
+        double turn = gamepad1.right_stick_x;
 
         double velocity = (gamepad1.left_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
         double ang_velocity = (gamepad1.right_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
 
         double[] v0 = MechanismUtil.calcv(turn * ang_velocity, drivex, drivey);
 
-        rightFPower   = Range.clip(v0[0] * velocity, -1.0, 1.0);
-        leftFPower    = Range.clip(v0[1] * velocity, -1.0, 1.0);
-        leftBPower    = Range.clip(v0[2] * velocity, -1.0, 1.0);
-        rightBPower   = Range.clip(v0[3] * velocity, -1.0, 1.0);
+        rightFPower = Range.clip(v0[0] * velocity, -1.0, 1.0);
+        leftFPower = Range.clip(v0[1] * velocity, -1.0, 1.0);
+        leftBPower = Range.clip(v0[2] * velocity, -1.0, 1.0);
+        rightBPower = Range.clip(v0[3] * velocity, -1.0, 1.0);
+        liftPower = Range.clip(0.5, -1.0, 1.0);
 
 
         // Send calculated power to wheels
@@ -151,16 +170,82 @@ public class TeleopMain extends OpMode
 
         boolean intake_activate = gamepad1.right_bumper;
 
-        intakeL.setPower(intake_activate ? 0.3 : 0.0);
-        intakeR.setPower(intake_activate ? 0.3 : 0.0);
+        //intakeL.setPower(intake_activate ? 0.3 : 0.0);
+        //intakeR.setPower(intake_activate ? 0.3 : 0.0);
+
+        if(gamepad1.b){
+            //move to 0 degrees.
+            servoTest.setPosition(0.75);
+        } else {
+            //move to 90 degrees.
+            servoTest.setPosition(0.0555);
+        }
+
+        if(gamepad1.x && gamepad1.y) {
+            intakeDown = !intakeDown;
+        }
+        if (intakeDown) {
+            servoRight.setPosition(0.5);
+            servoLeft.setPosition(0.56);
+        } else {
+            servoRight.setPosition(1.0);
+            servoLeft.setPosition(1.0);
+        }
+
+
+        if(gamepad1.x){
+            intakeL.setPower(intake_activate ? 0.15 : 0.0);
+            intakeR.setPower(intake_activate ? 0.45 : 0.0);
+        }
+        if(gamepad1.y){
+            intakeL.setPower(intake_activate ? 0.45 : 0.0);
+            intakeR.setPower(intake_activate ? 0.15 : 0.0);
+        }
+        if(!(gamepad1.x || gamepad1.y)){
+            intakeL.setPower(intake_activate ? 0.45 : 0.0);
+            intakeR.setPower(intake_activate ? 0.45 : 0.0);
+        }
+        if(gamepad1.a){
+            servoL.setPosition(0.4);
+            servoR.setPosition(1);
+        }
+        else{
+            servoL.setPosition(1.0);
+            servoR.setPosition(0.42);
+        }
+
+        if (gamepad1.dpad_up) {
+            if (!lifting_fwd) {
+                lifting.setDirection(DcMotor.Direction.FORWARD);
+                lifting_fwd = true;
+            }
+            lifting.setPower(1.0);
+            telemetry.addData("Lifting pwr", 1.0);
+        }
+        else if (gamepad1.dpad_down) {
+            if (lifting_fwd) {
+                lifting.setDirection(DcMotor.Direction.REVERSE);
+                lifting_fwd = false;
+            }
+            lifting.setPower(1.0);
+            telemetry.addData("Lifting pwr", -1.0);
+        }
+        else {
+            lifting.setPower(0.0);
+        }
+        if(gamepad1.left_bumper){
+
+
+        }
     }
 
+
     /*
-     * Code to run ONCE after the driver hits STOP
+     * Code to run ONCE after the driver hits STOPls
+     * 
      */
     @Override
     public void stop() {
     }
 
 }
-

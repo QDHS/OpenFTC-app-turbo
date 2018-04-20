@@ -33,13 +33,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Auto Test", group="Testing Opmode")
+@TeleOp(name="Teleop Manual (Mecnaum)", group="Testing Opmode")
 //@Disabled
-public class AutoMain extends OpMode
+public class TeleopMain extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -48,7 +47,9 @@ public class AutoMain extends OpMode
     private DcMotor leftBDrive = null;
     private DcMotor rightBDrive = null;
 
-    DistanceSensor sensorDistance;
+    private DcMotor intakeL = null;
+    private DcMotor intakeR = null;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -65,7 +66,9 @@ public class AutoMain extends OpMode
         leftBDrive  = hardwareMap.get(DcMotor.class, "lb");
         rightBDrive = hardwareMap.get(DcMotor.class, "rb");
 
-        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+        intakeL = hardwareMap.get(DcMotor.class, "intakeL");
+        intakeR = hardwareMap.get(DcMotor.class, "intakeR");
+
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -73,6 +76,9 @@ public class AutoMain extends OpMode
         rightFDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        intakeL.setDirection(DcMotor.Direction.FORWARD);
+        intakeR.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -98,6 +104,10 @@ public class AutoMain extends OpMode
      */
     @Override
     public void loop() {
+        // =========================================================================================
+        // Motors
+        // =========================================================================================
+
         // Setup a variable for each drive wheel to save power level for telemetry
         double leftFPower;
         double leftBPower;
@@ -109,10 +119,10 @@ public class AutoMain extends OpMode
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
-        double drivex = 0.0;//-gamepad1.left_stick_x;
-        double drivey = 1.0;//gamepad1.left_stick_y;
+        double drivex = -gamepad1.left_stick_x;
+        double drivey = gamepad1.left_stick_y;
 
-        double turn  =  0.0;//gamepad1.right_stick_x;
+        double turn  =  gamepad1.right_stick_x;
 
         double velocity = (gamepad1.left_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
         double ang_velocity = (gamepad1.right_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
@@ -134,6 +144,15 @@ public class AutoMain extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "v0 (%.2f), v1 (%.2f), v2 (%.2f), v3 (%.2f)", v0[0], v0[1], v0[2], v0[3]);
+
+        // =========================================================================================
+        // Intake
+        // =========================================================================================
+
+        boolean intake_activate = gamepad1.right_bumper;
+
+        intakeL.setPower(intake_activate ? 0.3 : 0.0);
+        intakeR.setPower(intake_activate ? 0.3 : 0.0);
     }
 
     /*
@@ -144,3 +163,4 @@ public class AutoMain extends OpMode
     }
 
 }
+
