@@ -28,12 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.Pioneer2018;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -45,9 +44,8 @@ public class TeleopMain2 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFDrive = null;
     private DcMotor rightFDrive = null;
+    private DcMotor rightBDrive = null;
     private DcMotor leftBDrive = null;
-    private DcMotor LifterUpDrive = null;
-    private DcMotor LifterDownDrive= null;
     private DcMotor intakeL = null;
     private DcMotor intakeR = null;
     private DcMotor lifting = null;
@@ -57,8 +55,8 @@ public class TeleopMain2 extends OpMode {
     private Servo servoLeft = null;
     private Servo servoL = null;
     private Servo servoR = null;
+    private Servo servoPole = null;
 
-    private DcMotor rightBDrive = null;
     private boolean intakeDown = true;
 
     /*
@@ -97,6 +95,8 @@ public class TeleopMain2 extends OpMode {
         servoL = hardwareMap.get(Servo.class, "servoL");
         servoR = hardwareMap.get(Servo.class, "servoR");
 
+        servoPole = hardwareMap.get(Servo.class, "servoPole");
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -121,6 +121,8 @@ public class TeleopMain2 extends OpMode {
      */
     @Override
     public void loop() {
+        servoPole.setPosition(0.4);
+
         // =========================================================================================
         // Motors
         // =========================================================================================
@@ -130,13 +132,7 @@ public class TeleopMain2 extends OpMode {
         double leftBPower;
         double rightFPower;
         double rightBPower;
-        double liftPower;
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
         double drivex = -gamepad1.left_stick_x;
         double drivey = gamepad1.left_stick_y;
 
@@ -145,14 +141,14 @@ public class TeleopMain2 extends OpMode {
         double velocity = (gamepad1.left_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
         double ang_velocity = (gamepad1.right_stick_button ? 1.0 : 0.75) * (1.0 - gamepad1.left_trigger);
 
+        velocity *= gamepad1.left_bumper ? 0.5 : 1.0;
+
         double[] v0 = MechanismUtil.calcv(turn * ang_velocity, drivex, drivey);
 
         rightFPower = Range.clip(v0[0] * velocity, -1.0, 1.0);
         leftFPower = Range.clip(v0[1] * velocity, -1.0, 1.0);
         leftBPower = Range.clip(v0[2] * velocity, -1.0, 1.0);
         rightBPower = Range.clip(v0[3] * velocity, -1.0, 1.0);
-        liftPower = Range.clip(0.5, -1.0, 1.0);
-
 
         // Send calculated power to wheels
         leftFDrive.setPower(Math.abs(leftFPower) * leftFPower);
@@ -165,14 +161,8 @@ public class TeleopMain2 extends OpMode {
         telemetry.addData("Motors", "v0 (%.2f), v1 (%.2f), v2 (%.2f), v3 (%.2f)", v0[0], v0[1], v0[2], v0[3]);
 
         // =========================================================================================
-        // Intake
+        // Offload platform
         // =========================================================================================
-
-        boolean intake_activate = gamepad1.right_bumper;
-
-        //intakeL.setPower(intake_activate ? 0.3 : 0.0);
-        //intakeR.setPower(intake_activate ? 0.3 : 0.0);
-
         if(gamepad1.b){
             //move to 0 degrees.
             servoTest.setPosition(0.75);
@@ -181,39 +171,57 @@ public class TeleopMain2 extends OpMode {
             servoTest.setPosition(0.0555);
         }
 
+        // =========================================================================================
+        // Intake Position
+        // =========================================================================================
         if(gamepad1.x && gamepad1.y) {
             intakeDown = !intakeDown;
+            telemetry.addData("Intake Status", intakeDown ? "down" : "up");
         }
         if (intakeDown) {
-            servoRight.setPosition(0.5);
-            servoLeft.setPosition(0.56);
+            servoRight.setPosition(0);
+            servoLeft.setPosition(0.3);
         } else {
-            servoRight.setPosition(1.0);
-            servoLeft.setPosition(1.0);
+            servoRight.setPosition(0.5);
+            servoLeft.setPosition(0.8);
         }
 
+
+        // =========================================================================================
+        // Intake (With Diffrential Speed)
+        // =========================================================================================
+        boolean intake_activate = gamepad1.right_bumper;
+
+        double intake_negate = gamepad1.left_bumper ? -1.0 : 1.0;
 
         if(gamepad1.x){
-            intakeL.setPower(intake_activate ? 0.15 : 0.0);
-            intakeR.setPower(intake_activate ? 0.45 : 0.0);
+            intakeL.setPower(intake_activate ? intake_negate * 0.25 : 0.0);
+            intakeR.setPower(intake_activate ? intake_negate * 1.0  : 0.0);
         }
         if(gamepad1.y){
-            intakeL.setPower(intake_activate ? 0.45 : 0.0);
-            intakeR.setPower(intake_activate ? 0.15 : 0.0);
+            intakeL.setPower(intake_activate ? intake_negate * 1.0  : 0.0);
+            intakeR.setPower(intake_activate ? intake_negate * 0.25 : 0.0);
         }
         if(!(gamepad1.x || gamepad1.y)){
-            intakeL.setPower(intake_activate ? 0.45 : 0.0);
-            intakeR.setPower(intake_activate ? 0.45 : 0.0);
+            intakeL.setPower(intake_activate ? intake_negate * 1.0  : 0.0);
+            intakeR.setPower(intake_activate ? intake_negate * 1.0  : 0.0);
         }
+
+        // =========================================================================================
+        // Feeder
+        // =========================================================================================
         if(gamepad1.a){
-            servoL.setPosition(0.4);
+            servoL.setPosition(0);
             servoR.setPosition(1);
         }
         else{
-            servoL.setPosition(1.0);
-            servoR.setPosition(0.42);
+            servoL.setPosition(0.54);
+            servoR.setPosition(0.46);
         }
 
+        // =========================================================================================
+        // Lifting platform
+        // =========================================================================================
         if (gamepad1.dpad_up) {
             if (!lifting_fwd) {
                 lifting.setDirection(DcMotor.Direction.FORWARD);
@@ -233,16 +241,14 @@ public class TeleopMain2 extends OpMode {
         else {
             lifting.setPower(0.0);
         }
-        if(gamepad1.left_bumper){
 
 
-        }
     }
 
 
     /*
      * Code to run ONCE after the driver hits STOPls
-     * 
+     *
      */
     @Override
     public void stop() {

@@ -1018,7 +1018,7 @@ public class VuforiaLocalizerImpl implements VuforiaLocalizer {
     // Operations
     //----------------------------------------------------------------------------------------------
 
-    protected class VuforiaCallback implements Vuforia.UpdateCallbackInterface {
+    public class VuforiaCallback implements Vuforia.UpdateCallbackInterface {
         @Override
         public void Vuforia_onUpdate(State state) {
             synchronized (updateCallbackLock) {
