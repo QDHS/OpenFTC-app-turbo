@@ -65,19 +65,8 @@ public class Vuforia extends LinearOpMode {
         // OR...  Do Not Activate the Camera Monitor View, to save power
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        /*
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code onthe next line, between the double quotes.
-         */
-        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+        parameters.vuforiaLicenseKey = "AVPqpOv/////AAADmQKVp/KL0E0lkd0l63ZUA7IA46W6F+fpvg6O3Yl/2DXqIDmWYhMiqV2kq3YkmcgIJPcAYIxaDs3N3BCyrOFk2K8dDHAJ3ALP56hlTI7jf9DH2UaB6L8tmyLLMNQDYQVNIaT1aiipG5mLG82v4I2IBErXwlBBNmiaM65KkPZ2nNP6ASFzsSW8yOPP3A1y7umbVOXrijrbE7FIY8JshnyM0EggMkI8H0WzQ617nTthYC3zhqCkquED4CEVGsxrjFwaqWr567fW2h391+DRQLMw2ZIudLTPq1djEl79FAT8mRkmGqbgJWcT0NKwgqQsxAjMC0QDlDMbND+7PPWHPjC/2Hyj4/u0iAnv02fcNs3bJvPy";
+                //BuildConfig.VUFORIA_KEY;
 
         /*
          * We also indicate which camera on the RC that we wish to use.
