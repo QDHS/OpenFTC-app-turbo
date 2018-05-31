@@ -18,7 +18,9 @@ public abstract class OpModeGeneral extends LinearOpMode {
         init();
 
         telemetry.addLine("Initialized");
+        telemetry.addData(">", "Press Play to start");
         telemetry.update();
+        waitForStart();
 
         while (opModeIsActive()) {
             update();

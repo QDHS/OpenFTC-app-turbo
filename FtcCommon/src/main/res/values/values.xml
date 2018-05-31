@@ -59,8 +59,8 @@
         <item>I2C Bus 2|EDIT_I2C_BUS2</item>
         <item>I2C Bus 3|EDIT_I2C_BUS3</item>
     </string-array>
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">1dp</dimen>
+    <dimen name="activity_vertical_margin">1dp</dimen>
     <string name="about_activity">About</string>
     <string name="about_app_version">App Version</string>
 

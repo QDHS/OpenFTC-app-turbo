@@ -105,10 +105,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp">
 
         <TextView
             android:id="@+id/textNetworkConnectionStatus"
@@ -133,35 +133,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             android:visibility="invisible"
             android:text=""/>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textOpMode"
-            android:layout_above="@+id/textGamepad1">
-
-            <LinearLayout
-                android:id="@+id/cameraMonitorViewId"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                />
-
-            <!-- When visible, the error message will overlay and thus partially
-                 obscure part of the camera monitor. We make this trade off so as to
-                 allow for a bigger camera monitor view in the common case when the
-                 error is not in fact present
-              -->
-            <TextView
-                style="@style/FtcTextViewStyleBold"
-                android:id="@+id/textErrorMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:visibility="invisible"
-                android:textColor="?attr/textMediumDark"/>
-
-        </FrameLayout>
-
         <TextView
             android:id="@+id/textGamepad1"
             android:layout_width="match_parent"
@@ -179,17 +150,50 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             android:text=""/>
 
         <!-- invisible except when programming mode is activated from the DS -->
-        <TextView
-            android:id="@+id/textRemoteProgrammingMode"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/textGamepad2"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:paddingTop="20dp">
+
+            <LinearLayout
+                android:id="@+id/cameraMonitorViewId"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+
+            <!-- When visible, the error message will overlay and thus partially
+                 obscure part of the camera monitor. We make this trade off so as to
+                 allow for a bigger camera monitor view in the common case when the
+                 error is not in fact present
+              -->
+            <TextView
+                android:id="@+id/textErrorMessage"
+                style="@style/FtcTextViewStyleBold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="?attr/textMediumDark"
+                android:visibility="invisible" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textRemoteProgrammingMode"
+            android:layout_width="368dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:background="?attr/backgroundLight"
             android:gravity="center"
+            android:text=""
             android:textColor="?attr/textWhite"
             android:textSize="40sp"
             android:textStyle="bold"
-            android:visibility="invisible"
-            android:text=""/>
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
