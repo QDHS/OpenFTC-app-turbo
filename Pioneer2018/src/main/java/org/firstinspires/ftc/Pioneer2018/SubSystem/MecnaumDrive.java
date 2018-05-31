@@ -3,7 +3,7 @@ package org.firstinspires.ftc.Pioneer2018.SubSystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.Pioneer2018.MechanismUtil;
+import org.firstinspires.ftc.Pioneer2018.LegacySystem.MechanismUtil;
 
 public class MecnaumDrive extends SubSystem {
     private String SubSysName = "MecDrive";
