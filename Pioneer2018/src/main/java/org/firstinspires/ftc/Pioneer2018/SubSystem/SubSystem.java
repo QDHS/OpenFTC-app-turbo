@@ -4,11 +4,11 @@ public class SubSystem {
     private String SubSysName = "N/A";
     private String EventLog = "";
 
-    public SubSystem() {
-
+    public SubSystem(String name) {
+        SubSysName = name;
     }
 
-    public int update() {
+    public int update(double delta) {
         this.clearEventLog();
         return 0;
     }

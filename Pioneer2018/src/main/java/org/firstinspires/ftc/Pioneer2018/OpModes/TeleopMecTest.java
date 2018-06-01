@@ -44,7 +44,7 @@ public class TeleopMecTest extends OpModeGeneral {
     private MecnaumDrive mecDrive;
 
     @Override
-    public void init() {
+    public void Op_init() {
         mecDrive = new MecnaumDrive(
                 getMotor("lf"),
                 getMotor("rf"),
@@ -54,7 +54,7 @@ public class TeleopMecTest extends OpModeGeneral {
         addSubSystem(mecDrive);
     }
 
-    public void update() {
+    public void Op_update() {
         double drivex = -gamepad1.left_stick_x;
         double drivey = gamepad1.left_stick_y;
 

@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.Pioneer2018.LegacySystem.MechanismUtil;
 
 public class MecnaumDrive extends SubSystem {
-    private String SubSysName = "MecDrive";
-
     private DcMotor leftFDrive = null;
     private DcMotor rightFDrive = null;
     private DcMotor leftBDrive = null;
@@ -44,7 +42,7 @@ public class MecnaumDrive extends SubSystem {
     }
 
     public MecnaumDrive(DcMotor lf, DcMotor rf, DcMotor lb, DcMotor rb) {
-        super();
+        super("MecDrive");
 
         this.leftFDrive = lf;
         this.rightFDrive = rf;
@@ -55,6 +53,16 @@ public class MecnaumDrive extends SubSystem {
         rightFDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void stop() {
@@ -67,7 +75,9 @@ public class MecnaumDrive extends SubSystem {
         addEventLog("System stopped");
     }
 
-    public int update() {
+    private double last_time = 0.0;
+
+    public int update(double delta) {
         this.clearEventLog();
 
         double[] v0 = MechanismUtil.calcv(turn * ang_velocity, drivex, drivey);
@@ -82,7 +92,12 @@ public class MecnaumDrive extends SubSystem {
         leftBDrive.setPower(Math.abs(leftBPower) * leftBPower);
         rightBDrive.setPower(Math.abs(rightBPower) * rightBPower);
 
-        this.addEventLog(String.format("v0 (%.2f), v1 (%.2f), v2 (%.2f), v3 (%.2f)", v0[0], v0[1], v0[2], v0[3]));
+        this.addEventLog(String.format("P0 (%.2f), P1 (%.2f), P2 (%.2f), P3 (%.2f)", v0[0], v0[1], v0[2], v0[3]));
+        this.addEventLog(String.format("p0 (%.2f), p1 (%.2f), p2 (%.2f), p3 (%.2f)",
+                rightFDrive.getCurrentPosition(),
+                leftFDrive.getCurrentPosition(),
+                leftBDrive.getCurrentPosition(),
+                rightBDrive.getCurrentPosition()));
 
         return 1;
     }

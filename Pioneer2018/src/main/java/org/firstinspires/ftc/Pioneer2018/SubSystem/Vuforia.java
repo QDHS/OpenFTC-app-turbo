@@ -30,6 +30,8 @@ public class Vuforia extends SubSystem {
     private String vuMarkDetected = "";
 
     public Vuforia(Context appContext) {
+        super("Vuforia");
+
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
@@ -41,7 +43,6 @@ public class Vuforia extends SubSystem {
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = "AVPqpOv/////AAADmQKVp/KL0E0lkd0l63ZUA7IA46W6F+fpvg6O3Yl/2DXqIDmWYhMiqV2kq3YkmcgIJPcAYIxaDs3N3BCyrOFk2K8dDHAJ3ALP56hlTI7jf9DH2UaB6L8tmyLLMNQDYQVNIaT1aiipG5mLG82v4I2IBErXwlBBNmiaM65KkPZ2nNP6ASFzsSW8yOPP3A1y7umbVOXrijrbE7FIY8JshnyM0EggMkI8H0WzQ617nTthYC3zhqCkquED4CEVGsxrjFwaqWr567fW2h391+DRQLMw2ZIudLTPq1djEl79FAT8mRkmGqbgJWcT0NKwgqQsxAjMC0QDlDMbND+7PPWHPjC/2Hyj4/u0iAnv02fcNs3bJvPy";
-        //BuildConfig.VUFORIA_KEY;
 
         /*
          * We also indicate which camera on the RC that we wish to use.
@@ -64,7 +65,9 @@ public class Vuforia extends SubSystem {
         relicTrackables.activate();
     }
 
-    public int update() {
+    public int update(double delta) {
+        this.clearEventLog();
+
         /**
          * See if any of the instances of {@link relicTemplate} are currently visible.
          * {@link RelicRecoveryVuMark} is an enum which can have the following values:
@@ -77,14 +80,14 @@ public class Vuforia extends SubSystem {
             /* Found an instance of the template. In the actual game, you will probably
              * loop until this condition occurs, then move on to act accordingly depending
              * on which VuMark was visible. */
-            addEventLog(String.format("VuMark %s visible", vuMark));
+            this.addEventLog(String.format("VuMark %s visible", vuMark));
             vuMarkDetected = vuMark.toString();
 
             /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
              * it is perhaps unlikely that you will actually need to act on this pose information, but
              * we illustrate it nevertheless, for completeness. */
             OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
-            addEventLog(String.format("Pose %s", format(pose)));
+            this.addEventLog(String.format("Pose %s", format(pose)));
 
             /* We further illustrate how to decompose the pose into useful rotational and
              * translational components */
@@ -103,7 +106,7 @@ public class Vuforia extends SubSystem {
                 double rZ = rot.thirdAngle;
             }
         } else {
-            addEventLog("VuMark not visible");
+            this.addEventLog("VuMark not visible");
             vuMarkDetected = "";
         }
 

@@ -9,12 +9,11 @@ public class AutoVuforiaTest extends OpModeGeneral {
     private Vuforia vuforia;
 
     @Override
-    public void init() {
+    public void Op_init() {
         vuforia = new Vuforia(hardwareMap.appContext);
     }
 
-    @Override
-    public void update() {
+    public void Op_update() {
         telemetry.addData("VuMark got", vuforia.getVuMarkDetected());
     }
 }
