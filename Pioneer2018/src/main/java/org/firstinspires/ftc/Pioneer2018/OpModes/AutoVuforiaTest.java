@@ -14,6 +14,6 @@ public class AutoVuforiaTest extends OpModeGeneral {
     }
 
     public void Op_update() {
-        telemetry.addData("VuMark got", vuforia.getVuMarkDetected());
+        telemetry.addLine(String.format("VuMark got: %s", vuforia.getVuMarkDetected()));
     }
 }

@@ -27,7 +27,7 @@ public class Vuforia extends SubSystem {
     private VuforiaLocalizer vuforia;
     private VuforiaTrackable relicTemplate;
 
-    private String vuMarkDetected = "";
+    private RelicRecoveryVuMark vuMarkDetected;
 
     public Vuforia(Context appContext) {
         super("Vuforia");
@@ -75,13 +75,13 @@ public class Vuforia extends SubSystem {
          * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
          */
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        vuMarkDetected = vuMark;
         if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
             /* Found an instance of the template. In the actual game, you will probably
              * loop until this condition occurs, then move on to act accordingly depending
              * on which VuMark was visible. */
             this.addEventLog(String.format("VuMark %s visible", vuMark));
-            vuMarkDetected = vuMark.toString();
 
             /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
              * it is perhaps unlikely that you will actually need to act on this pose information, but
@@ -107,7 +107,6 @@ public class Vuforia extends SubSystem {
             }
         } else {
             this.addEventLog("VuMark not visible");
-            vuMarkDetected = "";
         }
 
         return 1;
@@ -117,5 +116,5 @@ public class Vuforia extends SubSystem {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 
-    public String getVuMarkDetected() { return vuMarkDetected; }
+    public RelicRecoveryVuMark getVuMarkDetected() { return vuMarkDetected; }
 }
