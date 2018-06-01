@@ -80,12 +80,12 @@ public class MecnaumDrive extends SubSystem {
     public int update(double delta) {
         this.clearEventLog();
 
-        double[] v0 = MechanismUtil.calcv(turn * ang_velocity, drivex, drivey);
+        double[] v0 = MechanismUtil.calcv(turn * ang_velocity, drivey, drivex);
 
-        double rightFPower   = Range.clip(v0[0] * velocity, -1.0, 1.0);
-        double leftFPower    = Range.clip(v0[1] * velocity, -1.0, 1.0);
-        double leftBPower    = Range.clip(v0[2] * velocity, -1.0, 1.0);
-        double rightBPower   = Range.clip(v0[3] * velocity, -1.0, 1.0);
+        double rightFPower = Range.clip(v0[0] * velocity, -1.0, 1.0);
+        double leftFPower  = Range.clip(v0[1] * velocity, -1.0, 1.0);
+        double leftBPower  = Range.clip(v0[2] * velocity, -1.0, 1.0);
+        double rightBPower = Range.clip(v0[3] * velocity, -1.0, 1.0);
 
         leftFDrive.setPower(Math.abs(leftFPower) * leftFPower);
         rightFDrive.setPower(Math.abs(rightFPower) * rightFPower);
@@ -93,7 +93,7 @@ public class MecnaumDrive extends SubSystem {
         rightBDrive.setPower(Math.abs(rightBPower) * rightBPower);
 
         this.addEventLog(String.format("P0 (%.2f), P1 (%.2f), P2 (%.2f), P3 (%.2f)", v0[0], v0[1], v0[2], v0[3]));
-        this.addEventLog(String.format("p0 (%.2f), p1 (%.2f), p2 (%.2f), p3 (%.2f)",
+        this.addEventLog(String.format("p0 %d, p1 %d, p2 %d, p3 %d",
                 rightFDrive.getCurrentPosition(),
                 leftFDrive.getCurrentPosition(),
                 leftBDrive.getCurrentPosition(),

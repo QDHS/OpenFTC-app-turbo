@@ -55,8 +55,8 @@ public class TeleopMecTest extends OpModeGeneral {
     }
 
     public void Op_update() {
-        double drivex = -gamepad1.left_stick_x;
-        double drivey = gamepad1.left_stick_y;
+        double drivex = gamepad1.left_stick_x;
+        double drivey = -gamepad1.left_stick_y;
 
         double turn  =  gamepad1.right_stick_x;
 
